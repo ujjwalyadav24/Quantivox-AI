@@ -13,12 +13,21 @@ import {
   YAxis,
 } from "recharts";
 
+const periods = [
+  { label: "1W", value: "5d" },
+  { label: "1M", value: "1mo" },
+  { label: "3M", value: "3mo" },
+  { label: "6M", value: "6mo" },
+  { label: "1Y", value: "1y" },
+  { label: "5Y", value: "5y" },
+];
+
 export default function StockChart() {
-  const { history, stock } = useStock();
+  const { history, stock, period, loadHistory } = useStock();
 
   const chartData = useMemo(() => {
     return history.map((item) => ({
-      day: item.date.slice(5), // MM-DD
+      day: item.date.slice(5),
       price: item.close,
     }));
   }, [history]);
@@ -36,8 +45,20 @@ export default function StockChart() {
           </p>
         </div>
 
-        <div className="rounded-lg bg-blue-600 px-3 py-1 text-sm text-white">
-          1 Month
+        <div className="flex flex-wrap gap-2">
+          {periods.map((item) => (
+            <button
+              key={item.value}
+              onClick={() => loadHistory(item.value)}
+              className={`rounded-lg px-3 py-1 text-sm transition ${
+                period === item.value
+                  ? "bg-blue-600 text-white"
+                  : "bg-[#1F2937] text-gray-300 hover:bg-[#374151]"
+              }`}
+            >
+              {item.label}
+            </button>
+          ))}
         </div>
       </div>
 

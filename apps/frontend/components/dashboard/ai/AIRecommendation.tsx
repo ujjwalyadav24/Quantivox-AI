@@ -1,71 +1,137 @@
 "use client";
 
-import { Brain, TrendingUp, ShieldCheck } from "lucide-react";
+import { useEffect } from "react";
+import {
+  Brain,
+  TrendingUp,
+  ShieldCheck,
+  CheckCircle,
+} from "lucide-react";
+
+import { useAI } from "@/context/AIContext";
+import { useStock } from "@/context/StockContext";
 
 export default function AIRecommendation() {
-  return (
-    <div className="rounded-2xl border border-white/10 bg-[#111827]/80 p-6 shadow-lg backdrop-blur-md h-full">
+  const { stock } = useStock();
+  const { ai, loading, loadRecommendation } = useAI();
 
-      <div className="flex items-center gap-3">
+  useEffect(() => {
+    if (stock?.symbol) {
+      loadRecommendation(stock.symbol);
+    }
+  }, [stock?.symbol]);
+
+  const recommendationColor =
+    ai?.recommendation === "BUY"
+      ? "text-green-400"
+      : ai?.recommendation === "SELL"
+      ? "text-red-400"
+      : "text-yellow-400";
+
+  const riskColor =
+    ai?.risk === "LOW"
+      ? "text-green-400"
+      : ai?.risk === "MEDIUM"
+      ? "text-yellow-400"
+      : "text-red-400";
+
+  return (
+    <div className="rounded-2xl border border-white/10 bg-[#111827]/80 p-6 shadow-lg backdrop-blur-md">
+
+      <div className="mb-6 flex items-center gap-3">
         <Brain className="text-cyan-400" size={30} />
+
         <h2 className="text-2xl font-bold text-white">
           AI Recommendation
         </h2>
       </div>
 
-      <div className="mt-8">
-
-        <span className="rounded-full bg-green-500/20 px-4 py-2 text-green-400 font-semibold">
-          BUY
-        </span>
-
-        <h3 className="mt-6 text-4xl font-black text-white">
-          94%
-        </h3>
-
+      {!stock && (
         <p className="text-gray-400">
-          Confidence Score
+          Search a stock to generate an AI recommendation.
         </p>
+      )}
 
-      </div>
+      {loading && (
+        <p className="text-blue-400">
+          Analyzing stock...
+        </p>
+      )}
 
-      <div className="mt-8 space-y-4">
+      {!loading && ai && (
+        <>
+          <div className="mb-6">
 
-        <div className="flex items-center gap-3 text-gray-300">
-          <TrendingUp className="text-green-400" />
-          RSI indicates bullish momentum
-        </div>
+            <p className="text-sm text-gray-400">
+              Recommendation
+            </p>
 
-        <div className="flex items-center gap-3 text-gray-300">
-          <TrendingUp className="text-green-400" />
-          MACD crossover confirmed
-        </div>
+            <h1
+              className={`mt-2 text-4xl font-black ${recommendationColor}`}
+            >
+              {ai.recommendation}
+            </h1>
 
-        <div className="flex items-center gap-3 text-gray-300">
-          <TrendingUp className="text-green-400" />
-          Price above 50-Day EMA
-        </div>
+          </div>
 
-      </div>
+          <div className="mb-6 flex items-center gap-3">
+            <TrendingUp className="text-blue-400" />
 
-      <div className="mt-10 rounded-xl bg-[#0B1120] p-4">
+            <div>
+              <p className="text-sm text-gray-400">
+                Confidence
+              </p>
 
-        <div className="flex items-center gap-2">
+              <p className="text-xl font-bold text-white">
+                {ai.confidence}%
+              </p>
+            </div>
+          </div>
 
-          <ShieldCheck className="text-green-400" />
+          <div className="mb-6 flex items-center gap-3">
+            <ShieldCheck className={riskColor} />
 
-          <span className="font-semibold text-white">
-            Risk Level
-          </span>
+            <div>
+              <p className="text-sm text-gray-400">
+                Risk
+              </p>
 
-        </div>
+              <p className={`text-xl font-bold ${riskColor}`}>
+                {ai.risk}
+              </p>
+            </div>
+          </div>
 
-        <h3 className="mt-2 text-2xl font-bold text-green-400">
-          LOW
-        </h3>
+          <div>
 
-      </div>
+            <p className="mb-3 text-sm text-gray-400">
+              AI Reasons
+            </p>
 
+            <div className="space-y-3">
+
+              {ai.reasons.map((reason, index) => (
+                <div
+                  key={index}
+                  className="flex items-start gap-3 rounded-lg bg-[#0B1120] p-3"
+                >
+                  <CheckCircle
+                    size={18}
+                    className="mt-1 text-green-400"
+                  />
+
+                  <p className="text-gray-300">
+                    {reason}
+                  </p>
+
+                </div>
+              ))}
+
+            </div>
+
+          </div>
+        </>
+      )}
     </div>
   );
 }

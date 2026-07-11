@@ -26,3 +26,15 @@ export async function getHistory(
 
   return response.json();
 }
+
+export async function getRecommendation(symbol: string) {
+  const response = await fetch(
+    `${API_BASE}/api/recommendation?symbol=${symbol}`
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch AI recommendation");
+  }
+
+  return response.json();
+}
