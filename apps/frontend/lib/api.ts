@@ -33,7 +33,19 @@ export async function getRecommendation(symbol: string) {
   );
 
   if (!response.ok) {
-    throw new Error("Failed to fetch AI recommendation");
+    throw new Error("Failed to fetch recommendation");
+  }
+
+  return response.json();
+}
+
+export async function getTechnical(symbol: string) {
+  const response = await fetch(
+    `${API_BASE}/api/technical?symbol=${symbol}`
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch technical indicators");
   }
 
   return response.json();
