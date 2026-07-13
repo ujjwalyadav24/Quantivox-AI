@@ -50,3 +50,15 @@ export async function getTechnical(symbol: string) {
 
   return response.json();
 }
+
+export async function getNews(symbol: string) {
+  const response = await fetch(
+    `${API_BASE}/api/news?symbol=${symbol}`
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch news");
+  }
+
+  return response.json();
+}

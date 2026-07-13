@@ -6,6 +6,7 @@ import AIRecommendation from "../../components/dashboard/ai/AIRecommendation";
 import CompanyOverview from "../../components/dashboard/company/CompanyOverview";
 import MarketStats from "../../components/dashboard/market/MarketStats";
 import TechnicalIndicators from "../../components/dashboard/technical/TechnicalIndicators";
+import LatestNews from "../../components/dashboard/news/LatestNews";
 
 export default function DashboardPage() {
   return (
@@ -50,6 +51,12 @@ export default function DashboardPage() {
           <div className="mt-10">
 
             <TechnicalIndicators />
+
+          </div>
+
+          <div className="mt-10">
+
+            <LatestNews />
 
           </div>
 
