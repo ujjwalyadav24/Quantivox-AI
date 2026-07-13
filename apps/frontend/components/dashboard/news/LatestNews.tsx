@@ -32,9 +32,15 @@ export default function LatestNews() {
 
       try {
         const data = await getNews(stock.symbol);
-        setNews(data);
+
+        if (Array.isArray(data)) {
+          setNews(data);
+        } else {
+          setNews([]);
+        }
       } catch (error) {
         console.error(error);
+        setNews([]);
       } finally {
         setLoading(false);
       }
@@ -118,6 +124,18 @@ export default function LatestNews() {
         </p>
       )}
 
+      {!loading && stock && news.length === 0 && (
+        <div className="rounded-xl border border-dashed border-white/10 bg-[#0B1120] p-10 text-center">
+          <p className="text-lg font-semibold text-white">
+            📰 No news available
+          </p>
+
+          <p className="mt-2 text-gray-400">
+            We couldn't find any recent news for this stock.
+          </p>
+        </div>
+      )}
+
       <div className="space-y-6">
 
         {news.map((item, index) => {
@@ -163,17 +181,17 @@ export default function LatestNews() {
                   {item.summary}
                 </p>
 
-                <a
-                  href={item.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-5 inline-flex items-center gap-2 text-blue-400 hover:text-blue-300"
-                >
-                  Read Full Article
-
-                  <ExternalLink size={16} />
-
-                </a>
+                {item.url && (
+                  <a
+                    href={item.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-5 inline-flex items-center gap-2 text-blue-400 hover:text-blue-300"
+                  >
+                    Read Full Article
+                    <ExternalLink size={16} />
+                  </a>
+                )}
 
               </div>
 

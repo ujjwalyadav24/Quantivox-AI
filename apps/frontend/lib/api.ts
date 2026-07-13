@@ -1,9 +1,7 @@
 const API_BASE = "http://127.0.0.1:8000";
 
 export async function searchStock(symbol: string) {
-  const response = await fetch(
-    `${API_BASE}/api/search?symbol=${symbol}`
-  );
+  const response = await fetch(`${API_BASE}/api/search?symbol=${symbol}`);
 
   if (!response.ok) {
     throw new Error("Failed to fetch stock");
@@ -58,6 +56,18 @@ export async function getNews(symbol: string) {
 
   if (!response.ok) {
     throw new Error("Failed to fetch news");
+  }
+
+  return response.json();
+}
+
+export async function getPrediction(symbol: string) {
+  const response = await fetch(
+    `${API_BASE}/api/prediction?symbol=${symbol}`
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch prediction");
   }
 
   return response.json();

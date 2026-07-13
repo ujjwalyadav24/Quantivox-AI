@@ -19,26 +19,32 @@ def get_stock_news(symbol: str):
         )
 
         response = requests.get(url)
-
         news = response.json()
+
+        # Finnhub returned an error
+        if isinstance(news, dict):
+            return []
+
+        # Unexpected response
+        if not isinstance(news, list):
+            return []
 
         results = []
 
         for item in news[:10]:
             results.append(
                 {
-                    "headline": item.get("headline"),
-                    "summary": item.get("summary"),
-                    "image": item.get("image"),
-                    "url": item.get("url"),
-                    "source": item.get("source"),
-                    "datetime": item.get("datetime"),
+                    "headline": item.get("headline", ""),
+                    "summary": item.get("summary", ""),
+                    "image": item.get("image", ""),
+                    "url": item.get("url", ""),
+                    "source": item.get("source", ""),
+                    "datetime": item.get("datetime", ""),
                 }
             )
 
         return results
 
     except Exception as e:
-        return {
-            "error": str(e)
-        }
+        print(e)
+        return []

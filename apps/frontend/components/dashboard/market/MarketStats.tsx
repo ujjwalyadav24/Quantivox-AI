@@ -9,14 +9,21 @@ import {
 
 import { useStock } from "@/context/StockContext";
 
+import {
+  formatCurrency,
+  formatNumber,
+} from "@/lib/formatters";
+
 function StatCard({
   icon,
   title,
-  value,
+  primary,
+  secondary,
 }: {
   icon: React.ReactNode;
   title: string;
-  value: string | number;
+  primary: string;
+  secondary?: string;
 }) {
   return (
     <div className="flex items-center gap-4 rounded-xl bg-[#0B1120] p-4">
@@ -29,9 +36,15 @@ function StatCard({
           {title}
         </p>
 
-        <p className="text-lg font-bold text-white">
-          {value}
+        <p className="mt-1 text-lg font-bold text-white">
+          {primary}
         </p>
+
+        {secondary && (
+          <p className="text-sm text-gray-400">
+            {secondary}
+          </p>
+        )}
       </div>
     </div>
   );
@@ -39,6 +52,36 @@ function StatCard({
 
 export default function MarketStats() {
   const { stock } = useStock();
+
+  const open = formatCurrency(
+    stock?.open,
+    stock?.currency
+  );
+
+  const previousClose = formatCurrency(
+    stock?.previousClose,
+    stock?.currency
+  );
+
+  const dayHigh = formatCurrency(
+    stock?.dayHigh,
+    stock?.currency
+  );
+
+  const dayLow = formatCurrency(
+    stock?.dayLow,
+    stock?.currency
+  );
+
+  const weekHigh = formatCurrency(
+    stock?.fiftyTwoWeekHigh,
+    stock?.currency
+  );
+
+  const weekLow = formatCurrency(
+    stock?.fiftyTwoWeekLow,
+    stock?.currency
+  );
 
   return (
     <div className="rounded-2xl border border-white/10 bg-[#111827]/80 p-6 shadow-lg backdrop-blur-md">
@@ -52,57 +95,55 @@ export default function MarketStats() {
         <StatCard
           icon={<TrendingUp className="text-green-400" />}
           title="Open"
-          value={stock?.open ?? "--"}
+          primary={open.primary}
+          secondary={open.secondary}
         />
 
         <StatCard
           icon={<Activity className="text-blue-400" />}
           title="Previous Close"
-          value={stock?.previousClose ?? "--"}
+          primary={previousClose.primary}
+          secondary={previousClose.secondary}
         />
 
         <StatCard
           icon={<TrendingUp className="text-green-500" />}
           title="Day High"
-          value={stock?.dayHigh ?? "--"}
+          primary={dayHigh.primary}
+          secondary={dayHigh.secondary}
         />
 
         <StatCard
           icon={<TrendingDown className="text-red-500" />}
           title="Day Low"
-          value={stock?.dayLow ?? "--"}
+          primary={dayLow.primary}
+          secondary={dayLow.secondary}
         />
 
         <StatCard
           icon={<TrendingUp className="text-emerald-400" />}
           title="52 Week High"
-          value={stock?.fiftyTwoWeekHigh ?? "--"}
+          primary={weekHigh.primary}
+          secondary={weekHigh.secondary}
         />
 
         <StatCard
           icon={<TrendingDown className="text-orange-400" />}
           title="52 Week Low"
-          value={stock?.fiftyTwoWeekLow ?? "--"}
+          primary={weekLow.primary}
+          secondary={weekLow.secondary}
         />
 
         <StatCard
           icon={<BarChart3 className="text-cyan-400" />}
           title="Volume"
-          value={
-            stock?.volume
-              ? stock.volume.toLocaleString()
-              : "--"
-          }
+          primary={formatNumber(stock?.volume)}
         />
 
         <StatCard
           icon={<BarChart3 className="text-purple-400" />}
           title="Average Volume"
-          value={
-            stock?.averageVolume
-              ? stock.averageVolume.toLocaleString()
-              : "--"
-          }
+          primary={formatNumber(stock?.averageVolume)}
         />
 
       </div>

@@ -7,7 +7,11 @@ import {
   ReactNode,
 } from "react";
 
-import { searchStock, getHistory } from "@/lib/api";
+import {
+  searchStock,
+  getHistory,
+  getPrediction,
+} from "@/lib/api";
 
 type Stock = {
   symbol?: string;
@@ -54,16 +58,31 @@ type HistoryPoint = {
   close: number;
 };
 
+type Prediction = {
+  currentPrice: number;
+  predictedPrice: number;
+  expectedMove: number;
+  confidence: number;
+  trend: string;
+};
+
 type StockContextType = {
   stock: Stock | null;
   history: HistoryPoint[];
+  prediction: Prediction | null;
+
   loading: boolean;
+
   period: string;
+
   search: (symbol: string) => Promise<void>;
+
   loadHistory: (period: string) => Promise<void>;
 };
 
-const StockContext = createContext<StockContextType | null>(null);
+const StockContext = createContext<StockContextType | null>(
+  null
+);
 
 export function StockProvider({
   children,
@@ -71,21 +90,37 @@ export function StockProvider({
   children: ReactNode;
 }) {
   const [stock, setStock] = useState<Stock | null>(null);
-  const [history, setHistory] = useState<HistoryPoint[]>([]);
+
+  const [history, setHistory] = useState<
+    HistoryPoint[]
+  >([]);
+
+  const [prediction, setPrediction] =
+    useState<Prediction | null>(null);
+
   const [loading, setLoading] = useState(false);
+
   const [period, setPeriod] = useState("1mo");
 
   const search = async (symbol: string) => {
     setLoading(true);
 
     try {
-      const [stockData, historyData] = await Promise.all([
+      const [
+        stockData,
+        historyData,
+        predictionData,
+      ] = await Promise.all([
         searchStock(symbol),
         getHistory(symbol, period),
+        getPrediction(symbol),
       ]);
 
       setStock(stockData);
+
       setHistory(historyData);
+
+      setPrediction(predictionData);
     } catch (err) {
       console.error(err);
     } finally {
@@ -105,6 +140,7 @@ export function StockProvider({
       );
 
       setHistory(historyData);
+
       setPeriod(newPeriod);
     } catch (err) {
       console.error(err);
@@ -117,10 +153,17 @@ export function StockProvider({
     <StockContext.Provider
       value={{
         stock,
+
         history,
+
+        prediction,
+
         loading,
+
         period,
+
         search,
+
         loadHistory,
       }}
     >

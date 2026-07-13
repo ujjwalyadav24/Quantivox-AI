@@ -6,6 +6,7 @@ from app.api.history import router as history_router
 from app.api.recommendation import router as recommendation_router
 from app.api.technical import router as technical_router
 from app.api.news import router as news_router
+from app.api.prediction import router as prediction_router
 
 app = FastAPI(
     title="Quantivox AI API",
@@ -28,6 +29,7 @@ app.include_router(history_router, prefix="/api")
 app.include_router(recommendation_router, prefix="/api")
 app.include_router(technical_router, prefix="/api")
 app.include_router(news_router, prefix="/api")
+app.include_router(prediction_router, prefix="/api")
 
 
 @app.get("/")
