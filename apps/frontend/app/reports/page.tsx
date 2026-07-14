@@ -3,7 +3,8 @@
 import Sidebar from "../../components/dashboard/sidebar/Sidebar";
 import Header from "../../components/dashboard/header/Header";
 
-import ReportCard from "../../components/reports/ReportCard";
+import PortfolioReport from "../../components/reports/PortfolioReport";
+import StockReport from "../../components/reports/stckrprt";
 
 export default function ReportsPage() {
   return (
@@ -22,33 +23,52 @@ export default function ReportsPage() {
           </h1>
 
           <p className="mt-4 text-lg text-gray-400">
-            Generate professional reports for your portfolio
-            and stock analysis.
+            Generate professional PDF reports powered by
+            Quantivox AI.
           </p>
 
-          <div className="mt-10 grid grid-cols-1 gap-8 xl:grid-cols-2">
+          <div className="mt-10 grid gap-8 lg:grid-cols-2">
 
-            <ReportCard
-              title="Portfolio Report"
-              description="Generate a PDF report containing your holdings, total investment, current value and overall profit or loss."
-              buttonText="Generate Portfolio Report"
-              onClick={() =>
-                alert(
-                  "Portfolio Report feature will be connected next."
-                )
-              }
-            />
+            {/* Portfolio Report */}
 
-            <ReportCard
-              title="Stock Analysis Report"
-              description="Generate a detailed PDF report for any searched stock including company overview, technical indicators, AI prediction and market statistics."
-              buttonText="Generate Stock Report"
-              onClick={() =>
-                alert(
-                  "Stock Report feature will be connected next."
-                )
-              }
-            />
+            <div className="rounded-2xl border border-white/10 bg-[#111827]/80 p-8 shadow-lg">
+
+              <h2 className="text-2xl font-bold text-white">
+                Portfolio Report
+              </h2>
+
+              <p className="mt-4 leading-7 text-gray-400">
+                Generate a complete report of your
+                portfolio including holdings, investment,
+                current value and profit/loss.
+              </p>
+
+              <div className="mt-8">
+                <PortfolioReport />
+              </div>
+
+            </div>
+
+            {/* Stock Report */}
+
+            <div className="rounded-2xl border border-white/10 bg-[#111827]/80 p-8 shadow-lg">
+
+              <h2 className="text-2xl font-bold text-white">
+                Stock Analysis Report
+              </h2>
+
+              <p className="mt-4 leading-7 text-gray-400">
+                Generate a professional AI-powered report
+                containing company overview, technical
+                indicators, AI prediction, recommendation
+                and latest market news.
+              </p>
+
+              <div className="mt-8">
+                <StockReport />
+              </div>
+
+            </div>
 
           </div>
 

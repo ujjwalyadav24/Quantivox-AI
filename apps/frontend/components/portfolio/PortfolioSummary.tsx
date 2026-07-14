@@ -28,9 +28,7 @@ function SummaryCard({
   return (
     <div className="rounded-xl bg-[#0B1120] p-5">
       <div className="flex items-center justify-between">
-
         <div>
-
           <p className="text-sm text-gray-400">
             {title}
           </p>
@@ -44,13 +42,11 @@ function SummaryCard({
               {secondary}
             </p>
           )}
-
         </div>
 
         <div className={`rounded-xl p-3 ${color}`}>
           {icon}
         </div>
-
       </div>
     </div>
   );
@@ -78,19 +74,19 @@ export default function PortfolioSummary() {
     );
   }
 
+  // Analytics values are returned in USD.
+  // formatCurrency() converts them to INR for the main display
+  // and keeps the USD amount as the secondary text.
   const investment = formatCurrency(
-    analytics.totalInvestment,
-    "INR"
+    analytics.totalInvestment
   );
 
   const currentValue = formatCurrency(
-    analytics.totalCurrentValue,
-    "INR"
+    analytics.totalCurrentValue
   );
 
   const profitLoss = formatCurrency(
-    Math.abs(analytics.totalProfitLoss),
-    "INR"
+    Math.abs(analytics.totalProfitLoss)
   );
 
   const isProfit =

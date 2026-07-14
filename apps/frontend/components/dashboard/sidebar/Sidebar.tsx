@@ -1,10 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+
 import {
   LayoutDashboard,
   Brain,
   BarChart3,
+  BriefcaseBusiness,
   FileText,
   Star,
   Settings,
@@ -28,6 +31,11 @@ const menu = [
     href: "/compare",
   },
   {
+    name: "Portfolio",
+    icon: BriefcaseBusiness,
+    href: "/portfolio",
+  },
+  {
     name: "Reports",
     icon: FileText,
     href: "/reports",
@@ -45,53 +53,51 @@ const menu = [
 ];
 
 export default function Sidebar() {
+  const pathname = usePathname();
+
   return (
-    <aside className="w-72 h-screen bg-[#070B18] border-r border-white/10 flex flex-col">
-
+    <aside className="flex h-screen w-72 flex-col border-r border-white/10 bg-[#070B18]">
       <div className="p-8">
-
         <h1 className="text-3xl font-black text-white">
           Quantivox AI
         </h1>
 
-        <p className="text-gray-400 mt-2">
+        <p className="mt-2 text-gray-400">
           Decision Support System
         </p>
-
       </div>
 
       <nav className="flex-1 px-4">
-
         {menu.map((item) => {
           const Icon = item.icon;
+
+          const active = pathname === item.href;
 
           return (
             <Link
               key={item.name}
               href={item.href}
-              className="flex items-center gap-4 rounded-xl px-5 py-4 text-gray-300 hover:bg-blue-600/20 hover:text-white transition mb-2"
+              className={`mb-2 flex items-center gap-4 rounded-xl px-5 py-4 transition-all duration-200 ${
+                active
+                  ? "bg-blue-600 text-white shadow-lg"
+                  : "text-gray-300 hover:bg-blue-600/20 hover:text-white"
+              }`}
             >
               <Icon size={22} />
-
-              {item.name}
+              <span className="font-medium">
+                {item.name}
+              </span>
             </Link>
           );
         })}
-
       </nav>
 
-      <div className="p-6 border-t border-white/10">
-
-        <button className="flex items-center gap-3 text-red-400 hover:text-red-300">
-
-          <LogOut />
-
-          Logout
-
+      <div className="border-t border-white/10 p-6">
+        <button className="flex items-center gap-3 text-red-400 transition hover:text-red-300">
+          <LogOut size={20} />
+          <span>Logout</span>
         </button>
-
       </div>
-
     </aside>
   );
 }

@@ -2,6 +2,9 @@ import { searchStock } from "./api";
 
 export type HoldingCalculation = {
   symbol: string;
+  company: string;
+  quantity: number;
+  buyPrice: number;
   currentPrice: number;
   currentValue: number;
   investment: number;
@@ -11,6 +14,7 @@ export type HoldingCalculation = {
 
 export async function calculateHolding(
   symbol: string,
+  company: string,
   quantity: number,
   buyPrice: number
 ): Promise<HoldingCalculation> {
@@ -26,17 +30,21 @@ export async function calculateHolding(
 
   return {
     symbol,
+    company,
+    quantity,
+    buyPrice,
     currentPrice,
     currentValue,
     investment,
     profitLoss,
-    currency: stock.currency,
+    currency: stock.currency ?? "USD",
   };
 }
 
 export async function calculatePortfolio(
   portfolio: {
     symbol: string;
+    company: string;
     quantity: number;
     buyPrice: number;
   }[]
@@ -45,6 +53,7 @@ export async function calculatePortfolio(
     portfolio.map((item) =>
       calculateHolding(
         item.symbol,
+        item.company,
         item.quantity,
         item.buyPrice
       )

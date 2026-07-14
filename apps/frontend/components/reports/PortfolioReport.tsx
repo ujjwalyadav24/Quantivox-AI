@@ -13,9 +13,9 @@ export default function PortfolioReport() {
   const { analytics } =
     usePortfolioAnalytics();
 
-  function generatePortfolioReport() {
+  async function generatePortfolioReport() {
     if (!analytics) {
-      alert("Portfolio is loading.");
+      alert("Portfolio is loading...");
       return;
     }
 
@@ -23,21 +23,26 @@ export default function PortfolioReport() {
 
     let y = 20;
 
-    // ===============================
+    //----------------------------------------------------
     // Header
-    // ===============================
+    //----------------------------------------------------
 
     doc.setFont("helvetica", "bold");
     doc.setFontSize(22);
 
-    doc.text("QUANTIVOX AI", 105, y, {
-      align: "center",
-    });
+    doc.text(
+      "QUANTIVOX AI",
+      105,
+      y,
+      {
+        align: "center",
+      }
+    );
 
     y += 8;
 
-    doc.setFontSize(12);
     doc.setFont("helvetica", "normal");
+    doc.setFontSize(12);
 
     doc.text(
       "AI Powered Stock Decision Support System",
@@ -48,47 +53,46 @@ export default function PortfolioReport() {
       }
     );
 
-    y += 15;
+    y += 10;
+
+    doc.setDrawColor(180);
 
     doc.line(15, y, 195, y);
 
-    y += 10;
-
-    doc.setFontSize(18);
-    doc.setFont("helvetica", "bold");
-
-    doc.text("Portfolio Report", 15, y);
-
     y += 12;
 
-    const generatedDate =
-      new Date().toLocaleString();
+    //----------------------------------------------------
+    // Report Title
+    //----------------------------------------------------
 
-    doc.setFontSize(11);
-    doc.setFont("helvetica", "normal");
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(18);
 
     doc.text(
-      `Generated On : ${generatedDate}`,
+      "Portfolio Report",
+      15,
+      y
+    );
+
+    y += 8;
+
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(11);
+
+    doc.text(
+      `Generated : ${new Date().toLocaleString()}`,
       15,
       y
     );
 
     y += 12;
 
-    doc.line(15, y, 195, y);
-
-    y += 10;
-
-    // ===============================
+    //----------------------------------------------------
     // Summary
-    // ===============================
+    //----------------------------------------------------
 
+    doc.setFont("helvetica", "bold");
     doc.setFontSize(15);
-
-    doc.setFont(
-      "helvetica",
-      "bold"
-    );
 
     doc.text(
       "Portfolio Summary",
@@ -96,77 +100,70 @@ export default function PortfolioReport() {
       y
     );
 
-    y += 12;
+    y += 10;
 
     const investment =
       formatCurrency(
         analytics.totalInvestment,
         "INR"
-      );
+      ).primary.replace(/₹/g, "Rs.");
 
-    const currentValue =
+    const current =
       formatCurrency(
         analytics.totalCurrentValue,
         "INR"
-      );
+      ).primary.replace(/₹/g, "Rs.");
 
-    const profit =
+    const pnl =
       formatCurrency(
         analytics.totalProfitLoss,
         "INR"
-      );
+      ).primary.replace(/₹/g, "Rs.");
 
+    doc.setFont("helvetica", "normal");
     doc.setFontSize(11);
-    doc.setFont(
-      "helvetica",
-      "normal"
-    );
 
     doc.text(
       `Total Holdings : ${portfolio.length}`,
-      15,
+      20,
       y
     );
 
-    y += 8;
+    y += 7;
 
     doc.text(
-      `Investment : ${investment.primary}`,
-      15,
+      `Investment : ${investment}`,
+      20,
       y
     );
 
-    y += 8;
+    y += 7;
 
     doc.text(
-      `Current Value : ${currentValue.primary}`,
-      15,
+      `Current Value : ${current}`,
+      20,
       y
     );
 
-    y += 8;
+    y += 7;
 
     doc.text(
-      `Profit / Loss : ${profit.primary}`,
-      15,
+      `Profit / Loss : ${pnl}`,
+      20,
       y
     );
 
-    y += 15;
+    y += 12;
 
     doc.line(15, y, 195, y);
 
     y += 10;
 
-    // ===============================
+    //----------------------------------------------------
     // Holdings
-    // ===============================
+    //----------------------------------------------------
 
-    doc.setFont(
-      "helvetica",
-      "bold"
-    );
-
+    doc.setFont("helvetica", "bold");
     doc.setFontSize(15);
 
     doc.text(
@@ -175,23 +172,38 @@ export default function PortfolioReport() {
       y
     );
 
-    y += 12;
-
-    doc.setFontSize(11);
+    y += 10;
 
     analytics.holdings.forEach(
-      (holding) => {
-        const current =
+      (holding, index) => {
+        if (y > 250) {
+          doc.addPage();
+          y = 20;
+        }
+
+        const buy =
+          formatCurrency(
+            holding.buyPrice,
+            holding.currency
+          ).primary.replace(/₹/g, "Rs.");
+
+        const currentPrice =
           formatCurrency(
             holding.currentPrice,
             holding.currency
-          );
+          ).primary.replace(/₹/g, "Rs.");
 
-        const pnl =
+        const currentValue =
+          formatCurrency(
+            holding.currentValue,
+            holding.currency
+          ).primary.replace(/₹/g, "Rs.");
+
+        const profit =
           formatCurrency(
             holding.profitLoss,
             holding.currency
-          );
+          ).primary.replace(/₹/g, "Rs.");
 
         doc.setFont(
           "helvetica",
@@ -199,25 +211,17 @@ export default function PortfolioReport() {
         );
 
         doc.text(
-          holding.symbol,
+          `${index + 1}. ${holding.symbol}`,
           15,
           y
         );
+
+        y += 7;
 
         doc.setFont(
           "helvetica",
           "normal"
         );
-
-        y += 6;
-
-        doc.text(
-          `Company : ${holding.company}`,
-          20,
-          y
-        );
-
-        y += 6;
 
         doc.text(
           `Quantity : ${holding.quantity}`,
@@ -228,7 +232,7 @@ export default function PortfolioReport() {
         y += 6;
 
         doc.text(
-          `Current Price : ${current.primary}`,
+          `Buy Price : ${buy}`,
           20,
           y
         );
@@ -236,25 +240,51 @@ export default function PortfolioReport() {
         y += 6;
 
         doc.text(
-          `Profit / Loss : ${pnl.primary}`,
+          `Current Price : ${currentPrice}`,
+          20,
+          y
+        );
+
+        y += 6;
+
+        doc.text(
+          `Current Value : ${currentValue}`,
+          20,
+          y
+        );
+
+        y += 6;
+
+        doc.text(
+          `Profit / Loss : ${profit}`,
           20,
           y
         );
 
         y += 10;
 
-        if (y > 260) {
-          doc.addPage();
-          y = 20;
-        }
+        doc.setDrawColor(220);
+
+        doc.line(20, y, 190, y);
+
+        y += 8;
       }
     );
 
-    y += 10;
+    //----------------------------------------------------
+    // Footer
+    //----------------------------------------------------
+
+    if (y > 260) {
+      doc.addPage();
+      y = 20;
+    }
+
+    doc.setDrawColor(180);
 
     doc.line(15, y, 195, y);
 
-    y += 10;
+    y += 8;
 
     doc.setFontSize(10);
 
@@ -266,7 +296,7 @@ export default function PortfolioReport() {
       y
     );
 
-    y += 6;
+    y += 5;
 
     doc.text(
       "This report is generated by Quantivox AI for educational purposes only.",
