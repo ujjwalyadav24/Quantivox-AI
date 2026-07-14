@@ -9,19 +9,22 @@ import {
   EyeOff,
   Mail,
   Lock,
-  LogIn,
+  UserPlus,
 } from "lucide-react";
 
 import useAuth from "@/hooks/useAuth";
 
-export default function LoginPage() {
+export default function SignupPage() {
   const router = useRouter();
 
-  const { signIn } = useAuth();
+  const { signUp } = useAuth();
 
   const [email, setEmail] = useState("");
 
   const [password, setPassword] = useState("");
+
+  const [confirmPassword, setConfirmPassword] =
+    useState("");
 
   const [showPassword, setShowPassword] =
     useState(false);
@@ -32,26 +35,47 @@ export default function LoginPage() {
   const [error, setError] =
     useState("");
 
-  async function handleLogin(
+  const [success, setSuccess] =
+    useState("");
+
+  async function handleSignup(
     e: React.FormEvent
   ) {
     e.preventDefault();
 
     setError("");
+    setSuccess("");
+
+    if (password !== confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
+
+    if (password.length < 6) {
+      setError(
+        "Password must contain at least 6 characters."
+      );
+      return;
+    }
 
     setLoading(true);
 
     try {
-      const { error } =
-        await signIn(
-          email,
-          password
-        );
+      const { error } = await signUp(
+        email,
+        password
+      );
 
       if (error) {
         setError(error.message);
       } else {
-        router.push("/dashboard");
+        setSuccess(
+          "Verification email sent. Please check your inbox."
+        );
+
+        setTimeout(() => {
+          router.push("/login");
+        }, 3000);
       }
     } catch {
       setError(
@@ -73,26 +97,23 @@ export default function LoginPage() {
           </h1>
 
           <p className="mt-3 text-gray-400">
-            Welcome Back
+            Create your account
           </p>
 
         </div>
 
         <form
-          onSubmit={handleLogin}
+          onSubmit={handleSignup}
           className="space-y-5"
         >
-
-          {/* Email */}
+             {/* Email */}
 
           <div>
-
             <label className="mb-2 block text-sm font-medium text-gray-300">
               Email Address
             </label>
 
             <div className="flex items-center rounded-xl border border-white/10 bg-[#0B1120] px-4">
-
               <Mail
                 size={18}
                 className="text-gray-500"
@@ -109,21 +130,17 @@ export default function LoginPage() {
                 placeholder="Enter your email"
                 className="w-full bg-transparent px-4 py-4 text-white placeholder:text-gray-500 outline-none"
               />
-
             </div>
-
           </div>
 
           {/* Password */}
 
           <div>
-
             <label className="mb-2 block text-sm font-medium text-gray-300">
               Password
             </label>
 
             <div className="flex items-center rounded-xl border border-white/10 bg-[#0B1120] px-4">
-
               <Lock
                 size={18}
                 className="text-gray-500"
@@ -136,14 +153,14 @@ export default function LoginPage() {
                     : "password"
                 }
                 required
-                autoComplete="current-password"
+                autoComplete="new-password"
                 value={password}
                 onChange={(e) =>
                   setPassword(
                     e.target.value
                   )
                 }
-                placeholder="Enter your password"
+                placeholder="Create a password"
                 className="w-full bg-transparent px-4 py-4 text-white placeholder:text-gray-500 outline-none"
               />
 
@@ -162,9 +179,40 @@ export default function LoginPage() {
                   <Eye size={18} />
                 )}
               </button>
-
             </div>
+          </div>
 
+          {/* Confirm Password */}
+
+          <div>
+            <label className="mb-2 block text-sm font-medium text-gray-300">
+              Confirm Password
+            </label>
+
+            <div className="flex items-center rounded-xl border border-white/10 bg-[#0B1120] px-4">
+              <Lock
+                size={18}
+                className="text-gray-500"
+              />
+
+              <input
+                type={
+                  showPassword
+                    ? "text"
+                    : "password"
+                }
+                required
+                autoComplete="new-password"
+                value={confirmPassword}
+                onChange={(e) =>
+                  setConfirmPassword(
+                    e.target.value
+                  )
+                }
+                placeholder="Confirm your password"
+                className="w-full bg-transparent px-4 py-4 text-white placeholder:text-gray-500 outline-none"
+              />
+            </div>
           </div>
 
           {error && (
@@ -173,31 +221,31 @@ export default function LoginPage() {
             </div>
           )}
 
+          {success && (
+            <div className="rounded-xl border border-green-500/30 bg-green-500/10 p-3 text-sm text-green-400">
+              {success}
+            </div>
+          )}
+
           <button
             type="submit"
             disabled={loading}
             className="flex w-full items-center justify-center gap-3 rounded-xl bg-blue-600 py-4 font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
           >
-
-            <LogIn size={20} />
+            <UserPlus size={20} />
 
             {loading
-              ? "Signing In..."
-              : "Login"}
-
-          </button>
-
+              ? "Creating Account..."
+              : "Create Account"}
+          </button>     
           <div className="text-center text-sm text-gray-400">
-
-            Don't have an account?{" "}
-
+            Already have an account?{" "}
             <Link
-              href="/signup"
+              href="/login"
               className="font-semibold text-blue-400 transition hover:text-blue-300"
             >
-              Create Account
+              Login
             </Link>
-
           </div>
 
         </form>
