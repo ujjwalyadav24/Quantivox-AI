@@ -1,13 +1,14 @@
 "use client";
 
-import usePortfolio from "@/hooks/usePortfolio";
-
 import {
   Briefcase,
   IndianRupee,
   TrendingUp,
   Wallet,
 } from "lucide-react";
+
+import usePortfolio from "@/hooks/usePortfolio";
+import usePortfolioAnalytics from "@/hooks/usePortfolioAnalytics";
 
 import { formatCurrency } from "@/lib/formatters";
 
@@ -26,7 +27,6 @@ function SummaryCard({
 }) {
   return (
     <div className="rounded-xl bg-[#0B1120] p-5">
-
       <div className="flex items-center justify-between">
 
         <div>
@@ -47,14 +47,11 @@ function SummaryCard({
 
         </div>
 
-        <div
-          className={`rounded-xl p-3 ${color}`}
-        >
+        <div className={`rounded-xl p-3 ${color}`}>
           {icon}
         </div>
 
       </div>
-
     </div>
   );
 }
@@ -62,16 +59,42 @@ function SummaryCard({
 export default function PortfolioSummary() {
   const { portfolio } = usePortfolio();
 
-  const totalHoldings = portfolio.length;
+  const {
+    analytics,
+    loading,
+  } = usePortfolioAnalytics();
 
-  const totalInvestment = portfolio.reduce(
-    (sum, item) =>
-      sum + item.buyPrice * item.quantity,
-    0
+  if (loading || !analytics) {
+    return (
+      <div className="rounded-2xl border border-white/10 bg-[#111827]/80 p-6 shadow-lg">
+        <h2 className="text-3xl font-bold text-white">
+          Portfolio Summary
+        </h2>
+
+        <p className="mt-6 text-blue-400">
+          Calculating portfolio...
+        </p>
+      </div>
+    );
+  }
+
+  const investment = formatCurrency(
+    analytics.totalInvestment,
+    "INR"
   );
 
-  const investment =
-    formatCurrency(totalInvestment, "INR");
+  const currentValue = formatCurrency(
+    analytics.totalCurrentValue,
+    "INR"
+  );
+
+  const profitLoss = formatCurrency(
+    Math.abs(analytics.totalProfitLoss),
+    "INR"
+  );
+
+  const isProfit =
+    analytics.totalProfitLoss >= 0;
 
   return (
     <div className="rounded-2xl border border-white/10 bg-[#111827]/80 p-6 shadow-lg backdrop-blur-md">
@@ -84,13 +107,15 @@ export default function PortfolioSummary() {
 
         <SummaryCard
           title="Total Holdings"
-          value={totalHoldings.toString()}
-          icon={<Briefcase className="text-white" />}
+          value={portfolio.length.toString()}
+          icon={
+            <Briefcase className="text-white" />
+          }
           color="bg-blue-500/20"
         />
 
         <SummaryCard
-          title="Total Investment"
+          title="Investment"
           value={investment.primary}
           secondary={investment.secondary}
           icon={
@@ -101,18 +126,28 @@ export default function PortfolioSummary() {
 
         <SummaryCard
           title="Current Value"
-          value="Coming Soon"
-          icon={<Wallet className="text-white" />}
+          value={currentValue.primary}
+          secondary={currentValue.secondary}
+          icon={
+            <Wallet className="text-white" />
+          }
           color="bg-cyan-500/20"
         />
 
         <SummaryCard
           title="Profit / Loss"
-          value="Coming Soon"
+          value={`${
+            isProfit ? "+" : "-"
+          }${profitLoss.primary}`}
+          secondary={profitLoss.secondary}
           icon={
             <TrendingUp className="text-white" />
           }
-          color="bg-yellow-500/20"
+          color={
+            isProfit
+              ? "bg-emerald-500/20"
+              : "bg-red-500/20"
+          }
         />
 
       </div>

@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 
 import { StockProvider } from "@/context/StockContext";
 import { AIProvider } from "@/context/AIContext";
+import { PortfolioProvider } from "@/context/PortfolioContext";
 
 import "./globals.css";
 
@@ -34,7 +35,9 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
         <StockProvider>
           <AIProvider>
-            {children}
+            <PortfolioProvider>
+              {children}
+            </PortfolioProvider>
           </AIProvider>
         </StockProvider>
       </body>
