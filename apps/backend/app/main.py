@@ -13,15 +13,11 @@ app = FastAPI(
     version="1.0.0"
 )
 
+# TEMPORARY CORS CONFIGURATION FOR TESTING
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-        "https://quantivox-ai.vercel.app",
-    ],
-    allow_origin_regex=r"https://.*\.vercel\.app",
-    allow_credentials=True,
+    allow_origins=["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )

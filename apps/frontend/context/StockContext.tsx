@@ -16,39 +16,27 @@ import {
 type Stock = {
   symbol?: string;
   company?: string;
-
   price?: number;
   currency?: string;
-
   country?: string;
   sector?: string;
   industry?: string;
   website?: string;
-
   marketCap?: number;
-
   open?: number;
   previousClose?: number;
-
   dayHigh?: number;
   dayLow?: number;
-
   fiftyTwoWeekHigh?: number;
   fiftyTwoWeekLow?: number;
-
   volume?: number;
   averageVolume?: number;
-
   beta?: number;
-
   trailingPE?: number;
   forwardPE?: number;
-
   trailingEps?: number;
   dividendYield?: number;
-
   employees?: number;
-
   exchange?: string;
   timezone?: string;
 };
@@ -70,19 +58,13 @@ type StockContextType = {
   stock: Stock | null;
   history: HistoryPoint[];
   prediction: Prediction | null;
-
   loading: boolean;
-
   period: string;
-
   search: (symbol: string) => Promise<void>;
-
   loadHistory: (period: string) => Promise<void>;
 };
 
-const StockContext = createContext<StockContextType | null>(
-  null
-);
+const StockContext = createContext<StockContextType | null>(null);
 
 export function StockProvider({
   children,
@@ -90,16 +72,11 @@ export function StockProvider({
   children: ReactNode;
 }) {
   const [stock, setStock] = useState<Stock | null>(null);
-
-  const [history, setHistory] = useState<
-    HistoryPoint[]
-  >([]);
-
+  const [history, setHistory] = useState<HistoryPoint[]>([]);
   const [prediction, setPrediction] =
     useState<Prediction | null>(null);
 
   const [loading, setLoading] = useState(false);
-
   const [period, setPeriod] = useState("1mo");
 
   const search = async (symbol: string) => {
@@ -116,13 +93,24 @@ export function StockProvider({
         getPrediction(symbol),
       ]);
 
+      console.log("========== SEARCH RESULT ==========");
+      console.log("Stock:", stockData);
+      console.log("History:", historyData);
+      console.log("Prediction:", predictionData);
+
+      if (!stockData) {
+        throw new Error("Stock data is empty");
+      }
+
       setStock(stockData);
+      setHistory(Array.isArray(historyData) ? historyData : []);
+      setPrediction(predictionData ?? null);
+    } catch (error) {
+      console.error("StockContext search error:", error);
 
-      setHistory(historyData);
-
-      setPrediction(predictionData);
-    } catch (err) {
-      console.error(err);
+      setStock(null);
+      setHistory([]);
+      setPrediction(null);
     } finally {
       setLoading(false);
     }
@@ -139,11 +127,12 @@ export function StockProvider({
         newPeriod
       );
 
-      setHistory(historyData);
+      console.log("History Update:", historyData);
 
+      setHistory(Array.isArray(historyData) ? historyData : []);
       setPeriod(newPeriod);
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.error("History error:", error);
     } finally {
       setLoading(false);
     }
@@ -153,17 +142,11 @@ export function StockProvider({
     <StockContext.Provider
       value={{
         stock,
-
         history,
-
         prediction,
-
         loading,
-
         period,
-
         search,
-
         loadHistory,
       }}
     >
