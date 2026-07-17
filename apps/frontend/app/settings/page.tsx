@@ -5,7 +5,7 @@ import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import Sidebar from "@/components/dashboard/sidebar/Sidebar";
 import Header from "@/components/dashboard/header/Header";
 
-export default function ProfilePage() {
+export default function SettingsPage() {
   return (
     <ProtectedRoute>
       <main className="flex min-h-screen bg-[#050816]">
@@ -16,11 +16,11 @@ export default function ProfilePage() {
 
           <div className="p-10">
             <h1 className="text-5xl font-black text-white">
-              Profile
+              Settings
             </h1>
 
             <p className="mt-4 text-lg text-gray-400">
-              User profile module is under development.
+              Settings module is under development.
             </p>
           </div>
         </section>

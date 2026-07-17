@@ -22,16 +22,18 @@ export default function LatestNews() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (!stock?.symbol) {
+    const symbol = stock?.symbol;
+
+    if (!symbol) {
       setNews([]);
       return;
     }
 
-    async function loadNews() {
+    async function loadNews(symbol: string) {
       setLoading(true);
 
       try {
-        const data = await getNews(stock.symbol);
+        const data = await getNews(symbol);
 
         if (Array.isArray(data)) {
           setNews(data);
@@ -46,8 +48,8 @@ export default function LatestNews() {
       }
     }
 
-    loadNews();
-  }, [stock?.symbol]);
+    loadNews(symbol);
+  }, [stock]);
 
   function sentiment(text: string) {
     const positiveWords = [
@@ -101,15 +103,12 @@ export default function LatestNews() {
 
   return (
     <div className="rounded-2xl border border-white/10 bg-[#111827]/80 p-6 shadow-lg backdrop-blur-md">
-
       <div className="mb-6 flex items-center gap-3">
-
         <Newspaper className="text-blue-400" />
 
         <h2 className="text-2xl font-bold text-white">
           Latest Financial News
         </h2>
-
       </div>
 
       {!stock && (
@@ -137,18 +136,14 @@ export default function LatestNews() {
       )}
 
       <div className="space-y-6">
-
         {news.map((item, index) => {
-          const result = sentiment(
-            item.headline + item.summary
-          );
+          const result = sentiment(item.headline + item.summary);
 
           return (
             <div
               key={index}
               className="overflow-hidden rounded-xl border border-white/10 bg-[#0B1120] transition hover:border-blue-500"
             >
-
               {item.image && (
                 <img
                   src={item.image}
@@ -158,9 +153,7 @@ export default function LatestNews() {
               )}
 
               <div className="p-5">
-
                 <div className="mb-3 flex items-center justify-between">
-
                   <span className="text-sm text-gray-400">
                     {item.source}
                   </span>
@@ -170,7 +163,6 @@ export default function LatestNews() {
                   >
                     {result.label}
                   </span>
-
                 </div>
 
                 <h3 className="text-xl font-bold text-white">
@@ -192,15 +184,11 @@ export default function LatestNews() {
                     <ExternalLink size={16} />
                   </a>
                 )}
-
               </div>
-
             </div>
           );
         })}
-
       </div>
-
     </div>
   );
 }
