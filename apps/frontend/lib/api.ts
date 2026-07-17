@@ -1,4 +1,6 @@
-const API_BASE = "http://127.0.0.1:8000";
+const API_BASE =
+  process.env.NEXT_PUBLIC_API_URL ||
+  "https://quantivox-ai.onrender.com";
 
 export async function searchStock(symbol: string) {
   const response = await fetch(`${API_BASE}/api/search?symbol=${symbol}`);
@@ -10,10 +12,7 @@ export async function searchStock(symbol: string) {
   return response.json();
 }
 
-export async function getHistory(
-  symbol: string,
-  period: string = "1mo"
-) {
+export async function getHistory(symbol: string, period: string = "1mo") {
   const response = await fetch(
     `${API_BASE}/api/history?symbol=${symbol}&period=${period}`
   );
