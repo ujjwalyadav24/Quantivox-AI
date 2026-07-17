@@ -10,12 +10,23 @@ from ta.momentum import RSIIndicator
 def predict_stock(symbol: str):
     stock = yf.Ticker(symbol.upper())
 
+    # Get historical data
     df = stock.history(period="5y")
 
     if df.empty:
         return {
             "error": "No historical data found."
         }
+
+    # -------------------------
+    # Get LIVE current price
+    # -------------------------
+
+    try:
+        info = stock.fast_info
+        current = float(info["lastPrice"])
+    except Exception:
+        current = float(df["Close"].iloc[-1])
 
     # -------------------------
     # Feature Engineering
@@ -49,11 +60,13 @@ def predict_stock(symbol: str):
     macd = MACD(close=df["Close"])
 
     df["MACD"] = macd.macd()
+
     df["Signal"] = macd.macd_signal()
 
     df["Return"] = df["Close"].pct_change()
 
     # Tomorrow's close
+
     df["Target"] = df["Close"].shift(-1)
 
     df.dropna(inplace=True)
@@ -87,11 +100,7 @@ def predict_stock(symbol: str):
 
     latest = X.iloc[-1:]
 
-    prediction = float(
-        model.predict(latest)[0]
-    )
-
-    current = float(df["Close"].iloc[-1])
+    prediction = float(model.predict(latest)[0])
 
     expected_move = (
         (prediction - current)
@@ -99,7 +108,6 @@ def predict_stock(symbol: str):
         * 100
     )
 
-    # Simple confidence estimate
     confidence = max(
         60,
         min(

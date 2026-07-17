@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 import {
   LayoutDashboard,
@@ -13,6 +13,8 @@ import {
   Settings,
   LogOut,
 } from "lucide-react";
+
+import { useAuthContext } from "@/context/AuthContext";
 
 const menu = [
   {
@@ -55,6 +57,16 @@ const menu = [
 export default function Sidebar() {
   const pathname = usePathname();
 
+  const router = useRouter();
+
+  const { signOut } = useAuthContext();
+
+  async function handleLogout() {
+    await signOut();
+
+    router.replace("/login");
+  }
+
   return (
     <aside className="flex h-screen w-72 flex-col border-r border-white/10 bg-[#070B18]">
       <div className="p-8">
@@ -84,16 +96,17 @@ export default function Sidebar() {
               }`}
             >
               <Icon size={22} />
-              <span className="font-medium">
-                {item.name}
-              </span>
+              <span>{item.name}</span>
             </Link>
           );
         })}
       </nav>
 
       <div className="border-t border-white/10 p-6">
-        <button className="flex items-center gap-3 text-red-400 transition hover:text-red-300">
+        <button
+          onClick={handleLogout}
+          className="flex items-center gap-3 text-red-400 transition hover:text-red-300"
+        >
           <LogOut size={20} />
           <span>Logout</span>
         </button>

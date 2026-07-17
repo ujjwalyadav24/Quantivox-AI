@@ -1,3 +1,7 @@
+"use client";
+
+import ProtectedRoute from "@/components/auth/ProtectedRoute";
+
 import Sidebar from "../../components/dashboard/sidebar/Sidebar";
 import Header from "../../components/dashboard/header/Header";
 
@@ -16,66 +20,65 @@ import LatestNews from "../../components/dashboard/news/LatestNews";
 
 export default function DashboardPage() {
   return (
-    <main className="flex min-h-screen bg-[#050816]">
-      <Sidebar />
+    <ProtectedRoute>
+      <main className="flex min-h-screen bg-[#050816]">
+        <Sidebar />
 
-      <section className="flex-1 overflow-y-auto">
-        <Header />
+        <section className="flex-1 overflow-y-auto">
+          <Header />
 
-        <div className="p-10">
-          {/* Title */}
+          <div className="p-10">
+            {/* Title */}
 
-          <h1 className="text-5xl font-black text-white">
-            Welcome to Quantivox AI
-          </h1>
+            <h1 className="text-5xl font-black text-white">
+              Welcome to Quantivox AI
+            </h1>
 
-          <p className="mt-4 text-lg text-gray-400">
-            AI Powered Stock Decision Support System
-          </p>
+            <p className="mt-4 text-lg text-gray-400">
+              AI Powered Stock Decision Support System
+            </p>
 
-          {/* Overview Cards */}
+            {/* Overview Cards */}
 
-          <div className="mt-10">
-            <OverviewCards />
+            <div className="mt-10">
+              <OverviewCards />
+            </div>
+
+            {/* Chart + Prediction */}
+
+            <div className="mt-10 grid grid-cols-1 gap-8 xl:grid-cols-2">
+              <StockChart />
+              <PredictionCard />
+            </div>
+
+            {/* Watchlist + AI Recommendation */}
+
+            <div className="mt-10 grid grid-cols-1 gap-8 xl:grid-cols-2">
+              <Watchlist />
+              <AIRecommendation />
+            </div>
+
+            {/* Company + Market */}
+
+            <div className="mt-10 grid grid-cols-1 gap-8 xl:grid-cols-2">
+              <CompanyOverview />
+              <MarketStats />
+            </div>
+
+            {/* Technical */}
+
+            <div className="mt-10">
+              <TechnicalIndicators />
+            </div>
+
+            {/* News */}
+
+            <div className="mt-10">
+              <LatestNews />
+            </div>
           </div>
-
-          {/* Chart + Prediction */}
-
-          <div className="mt-10 grid grid-cols-1 gap-8 xl:grid-cols-2">
-            <StockChart />
-
-            <PredictionCard />
-          </div>
-
-          {/* Watchlist + AI Recommendation */}
-
-          <div className="mt-10 grid grid-cols-1 gap-8 xl:grid-cols-2">
-            <Watchlist />
-
-            <AIRecommendation />
-          </div>
-
-          {/* Company + Market */}
-
-          <div className="mt-10 grid grid-cols-1 gap-8 xl:grid-cols-2">
-            <CompanyOverview />
-
-            <MarketStats />
-          </div>
-
-          {/* Technical */}
-
-          <div className="mt-10">
-            <TechnicalIndicators />
-          </div>
-
-          {/* News */}
-
-          <div className="mt-10">
-            <LatestNews />
-          </div>
-        </div>
-      </section>
-    </main>
+        </section>
+      </main>
+    </ProtectedRoute>
   );
 }

@@ -2,11 +2,19 @@
 
 interface ButtonProps {
   text: string;
+  onClick?: () => void;
+  type?: "button" | "submit" | "reset";
 }
 
-export default function Button({ text }: ButtonProps) {
+export default function Button({
+  text,
+  onClick,
+  type = "button",
+}: ButtonProps) {
   return (
     <button
+      type={type}
+      onClick={onClick}
       className="
       rounded-2xl
       bg-gradient-to-r
